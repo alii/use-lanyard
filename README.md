@@ -1,5 +1,7 @@
 # `use-lanyard`
 
+### [View Demo](https://codesandbox.io/s/use-lanyard-demo-kokjd?file=/index.js)
+
 React hook for [lanyard](https://github.com/Phineas/lanyard/), an easy way to track your Discord presence through REST or websockets.
 
 It's easy to use and fully typed. It returns an [swr](https://github.com/vercel/swr) `responseInterface`, but if you don't know what that means, here's an example:
