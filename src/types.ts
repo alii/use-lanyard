@@ -51,6 +51,7 @@ export interface Activity {
   flags?: number;
   details?: string;
   assets?: Assets;
+  application_id?: number;
 }
 
 export interface Emoji {
@@ -64,6 +65,8 @@ export interface Party {
 }
 
 export interface Assets {
+  small_text: string;
+  small_image: string;
   large_text: string;
   large_image: string;
 }
