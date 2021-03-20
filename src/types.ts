@@ -17,6 +17,7 @@ export interface Data {
 }
 
 export interface Spotify {
+  track_id: string;
   timestamps: Timestamps;
   song: string;
   artist: string;
