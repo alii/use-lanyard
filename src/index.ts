@@ -1,22 +1,35 @@
-import useSWR from 'swr';
-import { Data, LanyardResponse } from './types';
+import useSWR, {SWRConfiguration} from 'swr';
+import {Data, LanyardResponse} from './types';
 
 export * from './types';
 
-export function useLanyard(snowflake: string) {
-  return useSWR<Data>(`lanyard:${snowflake}`, async () => {
-    const request = await fetch(
-      `https://api.lanyard.rest/v1/users/${snowflake}`
-    );
+export class LanyardError extends Error {
+	constructor(public readonly code: number, message: string) {
+		super(message);
+	}
+}
 
-    const body = (await request.json()) as LanyardResponse;
+export function useLanyard(
+	snowflake: string,
+	options?: Omit<SWRConfiguration<Data, LanyardError>, 'fetcher'>,
+) {
+	return useSWR<Data>(
+		`lanyard:${snowflake}`,
+		async () => {
+			const request = await fetch(
+				`https://api.lanyard.rest/v1/users/${snowflake}`,
+			);
 
-    if ('error' in body) {
-      throw new Error(body.error.message);
-    }
+			const body = (await request.json()) as LanyardResponse;
 
-    return body.data as Data;
-  });
+			if ('error' in body) {
+				throw new LanyardError(request.status, body.error.message);
+			}
+
+			return body.data;
+		},
+		options,
+	);
 }
 
 export default useLanyard;

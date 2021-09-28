@@ -7,14 +7,14 @@ React hook for [lanyard](https://github.com/Phineas/lanyard/), an easy way to tr
 It's easy to use and fully typed. It returns an [swr](https://github.com/vercel/swr) `responseInterface`, but if you don't know what that means, here's an example:
 
 ```tsx
-import { useLanyard } from 'use-lanyard';
+import {useLanyard} from 'use-lanyard';
 
 const DISCORD_ID = '268798547439255572';
 
 export function Activity() {
-  const { data: activity } = useLanyard(DISCORD_ID);
+	const {data: activity} = useLanyard(DISCORD_ID);
 
-  return <>...</>;
+	return <>...</>;
 }
 ```
 
