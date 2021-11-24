@@ -8,6 +8,7 @@ export type LanyardResponseErrorOrData =
 
 export interface Data {
 	spotify: Spotify | null;
+	kv: {[key: string]: string};
 	listening_to_spotify: boolean;
 	discord_user: DiscordUser;
 	discord_status: string;
