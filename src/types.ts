@@ -53,7 +53,7 @@ export interface Activity {
 	flags?: number;
 	details?: string;
 	assets?: Assets;
-	application_id?: number;
+	application_id?: string;
 }
 
 export interface Emoji {
