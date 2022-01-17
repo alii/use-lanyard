@@ -1,5 +1,5 @@
 {
-	"version": "1.0.3",
+	"version": "1.0.5",
 	"license": "MIT",
 	"main": "dist/index.js",
 	"typings": "dist/index.d.ts",
@@ -17,8 +17,7 @@
 		"prepare": "tsdx build"
 	},
 	"peerDependencies": {
-		"react": ">=17",
-		"swr": "^1.0.1"
+		"react": ">=17"
 	},
 	"husky": {
 		"hooks": {
@@ -34,7 +33,6 @@
 		"husky": "^7.0.2",
 		"react": "^17.0.1",
 		"react-dom": "^17.0.2",
-		"swr": "^1.0.1",
 		"tsdx": "^0.14.1",
 		"tslib": "^2.3.1",
 		"typescript": "^4.4.3"
@@ -48,6 +46,6 @@
 		"hook"
 	],
 	"dependencies": {
-		"@stitches/react": "^1.2.1"
+		"swr": "^1.1.2"
 	}
 }
