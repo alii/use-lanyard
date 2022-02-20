@@ -1,9 +1,17 @@
 import React from 'react';
 import {render} from 'react-dom';
-import {LanyardDisplay} from '../src/index';
+import {useLanyard} from '../src/index';
 
 function App() {
-	return <LanyardDisplay id="268798547439255572" />;
+	const {data: activity} = useLanyard(
+		process.env.USER_ID || '268798547439255572',
+	);
+
+	return (
+		<pre>
+			<code>{JSON.stringify(activity, null, 2)}</code>
+		</pre>
+	);
 }
 
 render(<App />, document.getElementById('root'));

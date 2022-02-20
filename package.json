@@ -28,14 +28,14 @@
 	"author": "Alistair Smith",
 	"module": "dist/use-lanyard.esm.js",
 	"devDependencies": {
-		"@types/react": "^17.0.24",
-		"@types/react-dom": "^17.0.9",
-		"husky": "^7.0.2",
+		"@types/react": "^17.0.39",
+		"@types/react-dom": "^17.0.11",
+		"husky": "^7.0.4",
 		"react": "^17.0.1",
 		"react-dom": "^17.0.2",
 		"tsdx": "^0.14.1",
 		"tslib": "^2.3.1",
-		"typescript": "^4.4.3"
+		"typescript": "^4.5.5"
 	},
 	"description": "React hook for Lanyard for tracking your Discord presence.",
 	"repository": "https://github.com/alii/use-lanyard",
@@ -46,6 +46,6 @@
 		"hook"
 	],
 	"dependencies": {
-		"swr": "^1.1.2"
+		"swr": "^1.2.2"
 	}
 }

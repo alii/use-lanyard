@@ -8,13 +8,14 @@
 		"react": "../node_modules/react"
 	},
 	"devDependencies": {
-		"@types/react-dom": "^17.0.9",
-		"parcel": "^2.0.0-rc.0"
+		"@types/react-dom": "^17.0.11",
+		"parcel": "^2.3.2"
 	},
 	"dependencies": {
 		"react-dom": "^17.0.2"
 	},
 	"scripts": {
-		"dev": "parcel index.html"
+		"dev": "parcel index.html",
+		"socket": "parcel socket.html"
 	}
 }

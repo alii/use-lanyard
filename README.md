@@ -18,6 +18,22 @@ export function Activity() {
 }
 ```
 
+### Socket
+
+There is also a hook for using the websocket that Lanyard provides, here's an example:
+
+```tsx
+import {useLanyardWs} from 'use-lanyard';
+
+const DISCORD_ID = '268798547439255572';
+
+export function Activity() {
+	const activity = useLanyardWs(DISCORD_ID);
+
+	return <>...</>;
+}
+```
+
 ### Types
 
 You can also import the named types as follows
