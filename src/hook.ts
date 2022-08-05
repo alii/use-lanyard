@@ -2,8 +2,15 @@ import useSWR, {SWRConfiguration} from 'swr';
 import {Data, LanyardResponse} from './types';
 
 export class LanyardError extends Error {
-	constructor(public readonly code: number, message: string) {
+	public readonly code: number;
+
+	constructor(
+		public readonly request: Request,
+		public readonly response: Response,
+		message: string,
+	) {
 		super(message);
+		this.code = this.response.status;
 	}
 }
 
@@ -13,14 +20,16 @@ export function useLanyard(snowflake: string, options?: Options) {
 	return useSWR<Data, LanyardError>(
 		`lanyard:${snowflake}`,
 		async () => {
-			const request = await fetch(
+			const request = new Request(
 				`https://api.lanyard.rest/v1/users/${snowflake}`,
 			);
 
-			const body = (await request.json()) as LanyardResponse;
+			const response = await fetch(request);
+
+			const body = (await response.json()) as LanyardResponse;
 
 			if ('error' in body) {
-				throw new LanyardError(request.status, body.error.message);
+				throw new LanyardError(request, response, body.error.message);
 			}
 
 			return body.data;

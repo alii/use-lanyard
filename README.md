@@ -2,9 +2,9 @@
 
 ### [View Demo](https://codesandbox.io/s/use-lanyard-demo-kokjd?file=/index.js)
 
-React hook for [lanyard](https://github.com/Phineas/lanyard/), an easy way to track your Discord presence through REST or websockets.
+React hook for [lanyard](https://github.com/Phineas/lanyard/), an easy way to track your Discord presence through REST or WebSocket.
 
-It's easy to use and fully typed. It returns an [swr](https://github.com/vercel/swr) `responseInterface`, but if you don't know what that means, here's an example:
+It's easy to use and fully typed. With REST, the `useLanyard` hook returns an [SWR](https://github.com/vercel/swr) `SWRResponse`. Over WebSocket, it will return the `Data` type.
 
 ```tsx
 import {useLanyard} from 'use-lanyard';
@@ -20,7 +20,7 @@ export function Activity() {
 
 ### Socket
 
-There is also a hook for using the websocket that Lanyard provides, here's an example:
+There is also a hook for using the WebSocket that Lanyard provides, here's an example:
 
 ```tsx
 import {useLanyardWs} from 'use-lanyard';
@@ -34,9 +34,9 @@ export function Activity() {
 }
 ```
 
-### Types
+### Advanced usage with TypeScript
 
-You can also import the named types as follows
+If you need access to the underlying response types, you can import them as follows.
 
 ```ts
 import { Data, Activity, ...etc } from 'use-lanyard';

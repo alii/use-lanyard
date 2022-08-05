@@ -1,10 +1,6 @@
-export type LanyardResponse = {
-	success: boolean;
-} & LanyardResponseErrorOrData;
-
-export type LanyardResponseErrorOrData =
-	| {data: Data}
-	| {error: {message: string; code: string}};
+export type LanyardResponse =
+	| {success: true; data: Data}
+	| {success: false; error: {message: string; code: string}};
 
 export interface Data {
 	spotify: Spotify | null;

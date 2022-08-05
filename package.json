@@ -1,51 +1,43 @@
 {
-	"version": "1.1.0",
-	"license": "MIT",
+	"name": "use-lanyard",
+	"version": "1.2.0",
+	"author": "Alistair Smith",
+	"description": "React hook for Lanyard for tracking your Discord presence.",
+	"repository": "https://github.com/alii/use-lanyard",
 	"main": "dist/index.js",
 	"typings": "dist/index.d.ts",
+	"module": "dist/index.mjs",
+	"license": "MIT",
 	"files": [
 		"dist",
-		"src"
+		"README.md",
+		"LICENSE",
+		"package.json"
 	],
 	"engines": {
 		"node": ">=14"
 	},
 	"scripts": {
-		"start": "tsdx watch",
-		"build": "tsdx build",
-		"lint": "tsdx lint src",
-		"prepare": "tsdx build"
+		"build": "tsup"
 	},
-	"peerDependencies": {
-		"react": ">=17"
-	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "tsdx lint"
-		}
-	},
-	"name": "use-lanyard",
-	"author": "Alistair Smith",
-	"module": "dist/use-lanyard.esm.js",
-	"devDependencies": {
-		"@types/react": "^17.0.39",
-		"@types/react-dom": "^17.0.11",
-		"husky": "^7.0.4",
-		"react": "^17.0.1",
-		"react-dom": "^17.0.2",
-		"tsdx": "^0.14.1",
-		"tslib": "^2.3.1",
-		"typescript": "^4.5.5"
-	},
-	"description": "React hook for Lanyard for tracking your Discord presence.",
-	"repository": "https://github.com/alii/use-lanyard",
 	"keywords": [
 		"discord",
 		"presence",
 		"react",
 		"hook"
 	],
+	"devDependencies": {
+		"@types/react": "^18.0.15",
+		"@types/react-dom": "^18.0.6",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"tsup": "^6.2.1",
+		"typescript": "^4.7.4"
+	},
 	"dependencies": {
-		"swr": "^1.2.2"
+		"swr": "^1.3.0"
+	},
+	"peerDependencies": {
+		"react": ">=17"
 	}
 }
