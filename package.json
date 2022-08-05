@@ -18,7 +18,8 @@
 		"node": ">=14"
 	},
 	"scripts": {
-		"build": "tsup"
+		"build": "tsup",
+		"release": "yarn build && yarn publish"
 	},
 	"keywords": [
 		"discord",
