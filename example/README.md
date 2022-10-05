@@ -1,13 +1,13 @@
 # use-lanyard React Example
 
-To run this example clone the root repository, install packages, cd into the example directory and install the example projects packages, and then run the following command.
+To run this example clone the root repository, install packages with yarn, and then run the following command(s).
 
 ```bash
-yarn dev
+yarn example
 ```
 
-to run the example for the socket hook
+To run the example for the socket hook:
 
 ```bash
-yarn socket
+yarn example-socket
 ```

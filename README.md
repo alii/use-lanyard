@@ -4,7 +4,12 @@
 
 React hook for [lanyard](https://github.com/Phineas/lanyard/), an easy way to track your Discord presence through REST or WebSocket.
 
-It's easy to use and fully typed. With REST, the `useLanyard` hook returns an [SWR](https://github.com/vercel/swr) `SWRResponse`. Over WebSocket, it will return the `Data` type.
+### Features
+
+- Easy to use
+- TypeScript support
+- WebSocket support
+- Deduplicates network requests
 
 ```tsx
 import {useLanyard} from 'use-lanyard';
@@ -16,6 +21,15 @@ export function Activity() {
 
 	return <>...</>;
 }
+```
+
+With REST, the hook will dedeuplicate concurrent requests and will return the following type:
+
+```ts
+export type ContextData =
+	| {state: 'loaded'; data: Data; error?: LanyardError}
+	| {state: 'initial'; data?: undefined; error?: undefined}
+	| {state: 'errored'; data?: Data; error: LanyardError};
 ```
 
 ### Socket

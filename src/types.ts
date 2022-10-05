@@ -1,10 +1,24 @@
+export namespace API {
+	export type SuccessfulAPIResponse<T> = {
+		success: true;
+		data: T;
+	};
+
+	export type ErroredAPIResponse = {
+		success: false;
+		error: {message: string; code: string};
+	};
+}
+
+export type Snowflake = `${bigint}`;
+
 export type LanyardResponse =
-	| {success: true; data: Data}
-	| {success: false; error: {message: string; code: string}};
+	| API.SuccessfulAPIResponse<Data>
+	| API.ErroredAPIResponse;
 
 export interface Data {
 	spotify: Spotify | null;
-	kv: {[key: string]: string};
+	kv: Record<string, string>;
 	listening_to_spotify: boolean;
 	discord_user: DiscordUser;
 	discord_status: string;
@@ -31,7 +45,7 @@ export interface Timestamps {
 export interface DiscordUser {
 	username: string;
 	public_flags: number;
-	id: number;
+	id: Snowflake;
 	discriminator: string;
 	avatar: string;
 }
@@ -40,7 +54,7 @@ export interface Activity {
 	type: number;
 	state: string;
 	name: string;
-	id: string;
+	id: Snowflake;
 	emoji?: Emoji;
 	created_at: number;
 	timestamps?: Timestamps;
@@ -55,7 +69,7 @@ export interface Activity {
 
 export interface Emoji {
 	name: string;
-	id: number;
+	id: Snowflake;
 	animated: boolean;
 }
 

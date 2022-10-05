@@ -1,29 +1,29 @@
 import {useEffect, useState} from 'react';
-import {Data} from './types';
+import {Data, Snowflake} from './types';
 
-enum Op {
+export enum SocketOpcode {
 	Event,
 	Hello,
 	Initialize,
 	Heartbeat,
 }
 
-enum Event {
+export enum SocketEvents {
 	INIT_STATE = 'INIT_STATE',
 	PRESENCE_UPDATE = 'PRESENCE_UPDATE',
 }
 
-interface SocketData extends Data {
+export interface SocketData extends Data {
 	heartbeat_interval?: number;
 }
 
-interface SocketMessage {
-	op: Op;
-	t?: Event;
+export interface SocketMessage {
+	op: SocketOpcode;
+	t?: SocketEvents;
 	d?: SocketData;
 }
 
-export function useLanyardWs(snowflake: string | string[]) {
+export function useLanyardWS(snowflake: Snowflake | Snowflake[]) {
 	const [presence, setPresence] = useState<Data>();
 
 	useEffect(() => {
@@ -59,25 +59,28 @@ export function useLanyardWs(snowflake: string | string[]) {
 				const data: SocketMessage = JSON.parse(event.data);
 
 				switch (data.op) {
-					case Op.Hello:
+					case SocketOpcode.Hello:
 						heartbeat = setInterval(() => {
 							if (socket.readyState === socket.OPEN) {
-								socket.send(JSON.stringify({op: Op.Heartbeat}));
+								socket.send(JSON.stringify({op: SocketOpcode.Heartbeat}));
 							}
 						}, data.d?.heartbeat_interval);
 
 						if (socket.readyState === socket.OPEN) {
 							socket.send(
-								JSON.stringify({op: Op.Initialize, d: subscribe_data}),
+								JSON.stringify({
+									op: SocketOpcode.Initialize,
+									d: subscribe_data,
+								}),
 							);
 						}
 
 						break;
 
-					case Op.Event:
+					case SocketOpcode.Event:
 						switch (data.t) {
-							case Event.INIT_STATE:
-							case Event.PRESENCE_UPDATE:
+							case SocketEvents.INIT_STATE:
+							case SocketEvents.PRESENCE_UPDATE:
 								if (data.d) {
 									setPresence(data.d);
 								}
@@ -107,5 +110,3 @@ export function useLanyardWs(snowflake: string | string[]) {
 
 	return presence;
 }
-
-export default useLanyardWs;

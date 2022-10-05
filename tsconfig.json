@@ -3,6 +3,7 @@
 		"module": "esnext",
 		"lib": ["dom", "esnext"],
 		"strict": true,
+		"target": "ESNext",
 		"noImplicitReturns": true,
 		"noFallthroughCasesInSwitch": true,
 		"noUnusedLocals": true,

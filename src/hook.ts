@@ -1,5 +1,28 @@
-import useSWR, {SWRConfiguration} from 'swr';
-import {Data, LanyardResponse} from './types';
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useState,
+} from 'react';
+import type {API, Data, LanyardResponse, Snowflake} from './types';
+
+export type ContextData =
+	| {state: 'loaded'; isLoading: boolean; data: Data; error?: LanyardError}
+	| {state: 'initial'; isLoading: boolean; data?: undefined; error?: undefined}
+	| {state: 'errored'; isLoading: boolean; data?: Data; error: LanyardError};
+
+export type UseLanyardREST = ContextData & {
+	revalidate(): Promise<void>;
+};
+
+export const context = createContext<{
+	listeners: Set<() => void>;
+	data: ContextData;
+}>({
+	listeners: new Set(),
+	data: {state: 'initial', isLoading: false},
+});
 
 export class LanyardError extends Error {
 	public readonly code: number;
@@ -7,35 +30,97 @@ export class LanyardError extends Error {
 	constructor(
 		public readonly request: Request,
 		public readonly response: Response,
-		message: string,
+		public readonly body: API.ErroredAPIResponse,
 	) {
-		super(message);
+		super(body.error.message);
 		this.code = this.response.status;
 	}
 }
 
-export type Options = Omit<SWRConfiguration<Data, LanyardError>, 'fetcher'>;
+export function useLanyardContext() {
+	return useContext(context);
+}
 
-export function useLanyard(snowflake: string, options?: Options) {
-	return useSWR<Data, LanyardError>(
-		`lanyard:${snowflake}`,
-		async () => {
-			const request = new Request(
-				`https://api.lanyard.rest/v1/users/${snowflake}`,
-			);
+export function useLanyard(
+	snowflake: Snowflake,
+	base = 'https://api.lanyard.rest',
+): UseLanyardREST {
+	const [, rerender] = useState({});
+	const context = useLanyardContext();
 
-			const response = await fetch(request);
+	const dispatch = (data: ContextData) => {
+		context.data = data;
 
-			const body = (await response.json()) as LanyardResponse;
+		for (const listener of context.listeners) {
+			listener();
+		}
+	};
 
-			if ('error' in body) {
-				throw new LanyardError(request, response, body.error.message);
-			}
+	const loading = (isLoading: boolean) => {
+		dispatch({
+			...context.data,
+			isLoading,
+		});
+	};
 
-			return body.data;
-		},
-		options,
-	);
+	const revalidate = useCallback(async (controller?: AbortController) => {
+		if (context.data.isLoading) {
+			return;
+		}
+
+		loading(true);
+
+		const init: RequestInit = {
+			method: 'GET',
+			signal: controller?.signal,
+			headers: {Accept: 'application/json'},
+		};
+
+		const request = new Request(`${base}/v1/users/${snowflake}`, init);
+		const response = await fetch(request);
+
+		const body = (await response.json()) as LanyardResponse;
+
+		if ('error' in body) {
+			dispatch({
+				...context.data,
+				state: 'errored',
+				error: new LanyardError(request, response, body),
+				isLoading: false,
+			});
+		} else {
+			dispatch({
+				...context.data,
+				state: 'loaded',
+				data: body.data,
+				isLoading: false,
+			});
+		}
+	}, []);
+
+	useEffect(() => {
+		const listener = () => rerender({});
+		context.listeners.add(listener);
+
+		const controller = new AbortController();
+
+		void revalidate().finally(() => {
+			loading(false);
+		});
+
+		return () => {
+			controller.abort();
+			context.listeners.delete(listener);
+		};
+	}, [revalidate]);
+
+	return {
+		...context.data,
+
+		// We want to make sure users cannot pass any arguments into this function
+		// for example, when doing <button onClick={revalidate} />
+		revalidate: useCallback(() => revalidate(), [revalidate]),
+	};
 }
 
 export default useLanyard;
