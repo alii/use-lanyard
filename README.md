@@ -1,12 +1,11 @@
 # `use-lanyard`
 
-### [View Demo](https://codesandbox.io/s/use-lanyard-demo-kokjd?file=/index.js)
-
-React hook for [lanyard](https://github.com/Phineas/lanyard/), an easy way to track your Discord presence through REST or WebSocket.
+React hook for [lanyard](https://github.com/Phineas/lanyard), an easy way to track your Discord presence through REST or WebSocket.
 
 ### Features
 
 - Easy to use
+- Zero dependencies
 - TypeScript support
 - WebSocket support
 - Deduplicates network requests
@@ -23,26 +22,17 @@ export function Activity() {
 }
 ```
 
-With REST, the hook will dedeuplicate concurrent requests and will return the following type:
-
-```ts
-export type ContextData =
-	| {state: 'loaded'; data: Data; error?: LanyardError}
-	| {state: 'initial'; data?: undefined; error?: undefined}
-	| {state: 'errored'; data?: Data; error: LanyardError};
-```
-
 ### Socket
 
 There is also a hook for using the WebSocket that Lanyard provides, here's an example:
 
 ```tsx
-import {useLanyardWs} from 'use-lanyard';
+import {useLanyardWS} from 'use-lanyard';
 
 const DISCORD_ID = '268798547439255572';
 
 export function Activity() {
-	const activity = useLanyardWs(DISCORD_ID);
+	const activity = useLanyardWS(DISCORD_ID);
 
 	return <>...</>;
 }
@@ -53,7 +43,7 @@ export function Activity() {
 If you need access to the underlying response types, you can import them as follows.
 
 ```ts
-import { Data, Activity, ...etc } from 'use-lanyard';
+import {Data, Activity} from 'use-lanyard';
 // See src/types.ts for all types
 ```
 
