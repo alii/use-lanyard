@@ -54,7 +54,7 @@ export interface Activity {
 	type: number;
 	state: string;
 	name: string;
-	id: Snowflake;
+	id: string;
 	emoji?: Emoji;
 	created_at: number;
 	timestamps?: Timestamps;
@@ -64,7 +64,7 @@ export interface Activity {
 	flags?: number;
 	details?: string;
 	assets?: Assets;
-	application_id?: string;
+	application_id?: Snowflake;
 }
 
 export interface Emoji {
@@ -74,7 +74,7 @@ export interface Emoji {
 }
 
 export interface Party {
-	id: string;
+	id: Snowflake;
 }
 
 export interface Assets {

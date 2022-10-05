@@ -8,20 +8,37 @@ import {
 import type {API, Data, LanyardResponse, Snowflake} from './types';
 
 export type ContextData =
-	| {state: 'loaded'; isLoading: boolean; data: Data; error?: LanyardError}
-	| {state: 'initial'; isLoading: boolean; data?: undefined; error?: undefined}
-	| {state: 'errored'; isLoading: boolean; data?: Data; error: LanyardError};
+	| {
+			state: 'initial';
+			isLoading: boolean;
+			data: Data | undefined;
+			error: undefined;
+	  }
+	| {
+			state: 'loaded';
+			isLoading: boolean;
+			data: Data;
+			error: LanyardError | undefined;
+	  }
+	| {
+			state: 'errored';
+			isLoading: boolean;
+			data: Data | undefined;
+			error: LanyardError | undefined;
+	  };
+
+export type Context = {
+	listeners: Set<() => void>;
+	stateMap: Map<Snowflake, ContextData>;
+};
 
 export type UseLanyardREST = ContextData & {
 	revalidate(): Promise<void>;
 };
 
-export const context = createContext<{
-	listeners: Set<() => void>;
-	data: ContextData;
-}>({
+export const context = createContext<Context>({
 	listeners: new Set(),
-	data: {state: 'initial', isLoading: false},
+	stateMap: new Map(),
 });
 
 export class LanyardError extends Error {
@@ -41,30 +58,66 @@ export function useLanyardContext() {
 	return useContext(context);
 }
 
+export type Options = {
+	/**
+	 * The Base URL of Lanyard's API. Defaults to `https://api.lanyard.rest`
+	 */
+	base: string;
+
+	/**
+	 * Initial data to use. Useful if server side rendering.
+	 */
+	initialData?: Data;
+};
+
 export function useLanyard(
 	snowflake: Snowflake,
-	base = 'https://api.lanyard.rest',
+	_options?: Partial<Options>,
 ): UseLanyardREST {
+	const options: Options = {
+		base: 'https://api.lanyard.rest',
+		..._options,
+	};
+
 	const [, rerender] = useState({});
 	const context = useLanyardContext();
 
+	if (!context.stateMap.has(snowflake)) {
+		context.stateMap.set(snowflake, {
+			state: 'initial',
+			isLoading: false,
+			data: options.initialData,
+			error: undefined,
+		});
+	}
+
 	const dispatch = (data: ContextData) => {
-		context.data = data;
+		context.stateMap.set(snowflake, data);
 
 		for (const listener of context.listeners) {
 			listener();
 		}
 	};
 
+	const getState = () => {
+		const data = context.stateMap.get(snowflake);
+
+		if (!data) {
+			throw new Error('State not found');
+		}
+
+		return data;
+	};
+
 	const loading = (isLoading: boolean) => {
 		dispatch({
-			...context.data,
+			...getState(),
 			isLoading,
 		});
 	};
 
 	const revalidate = useCallback(async (controller?: AbortController) => {
-		if (context.data.isLoading) {
+		if (getState().isLoading) {
 			return;
 		}
 
@@ -76,21 +129,21 @@ export function useLanyard(
 			headers: {Accept: 'application/json'},
 		};
 
-		const request = new Request(`${base}/v1/users/${snowflake}`, init);
+		const request = new Request(`${options.base}/v1/users/${snowflake}`, init);
 		const response = await fetch(request);
 
 		const body = (await response.json()) as LanyardResponse;
 
 		if ('error' in body) {
 			dispatch({
-				...context.data,
+				...getState(),
 				state: 'errored',
 				error: new LanyardError(request, response, body),
 				isLoading: false,
 			});
 		} else {
 			dispatch({
-				...context.data,
+				...getState(),
 				state: 'loaded',
 				data: body.data,
 				isLoading: false,
@@ -115,7 +168,7 @@ export function useLanyard(
 	}, [revalidate]);
 
 	return {
-		...context.data,
+		...getState(),
 
 		// We want to make sure users cannot pass any arguments into this function
 		// for example, when doing <button onClick={revalidate} />

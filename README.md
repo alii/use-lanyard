@@ -22,6 +22,16 @@ export function Activity() {
 }
 ```
 
+### Server-side rendering / initial data
+
+You can also provide initial data to the hook, which will be used until the client is hydrated/able to fetch the latest data.
+
+```tsx
+const activity = useLanyard(DISCORD_ID, {
+	initialData: myInitialDataFromTheServer,
+});
+```
+
 ### Socket
 
 There is also a hook for using the WebSocket that Lanyard provides, here's an example:

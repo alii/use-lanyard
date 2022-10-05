@@ -5,6 +5,8 @@ import {useLanyard} from '../src/hook';
 function App() {
 	const state = useLanyard('268798547439255572');
 
+	console.log(state);
+
 	// Example showing built in request deduplication.
 	// The four requests below will only result in
 	// one request to the API. The other three will
@@ -16,7 +18,7 @@ function App() {
 
 	return (
 		<pre>
-			<code>{JSON.stringify(state, null, 2)}</code>
+			<code>{JSON.stringify({state}, null, 2)}</code>
 
 			<button onClick={state.revalidate}>revalidate</button>
 		</pre>
