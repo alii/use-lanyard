@@ -9,6 +9,7 @@ export interface Data {
 	discord_user: DiscordUser;
 	discord_status: string;
 	activities: Activity[];
+	active_on_discord_web: boolean;
 	active_on_discord_mobile: boolean;
 	active_on_discord_desktop: boolean;
 }
