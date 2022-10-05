@@ -125,7 +125,7 @@ export function useLanyard(
 
 		const init: RequestInit = {
 			method: 'GET',
-			signal: controller?.signal,
+			signal: controller?.signal ?? null,
 			headers: {Accept: 'application/json'},
 		};
 
