@@ -21,7 +21,7 @@ export interface Data {
 	kv: Record<string, string>;
 	listening_to_spotify: boolean;
 	discord_user: DiscordUser;
-	discord_status: string;
+	discord_status: 'online' | 'idle' | 'dnd' | 'offline';
 	activities: Activity[];
 	active_on_discord_web: boolean;
 	active_on_discord_mobile: boolean;
