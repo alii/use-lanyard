@@ -25,7 +25,7 @@ export interface SocketMessage {
 
 export function useLanyardWS(
 	snowflake: Snowflake | Snowflake[],
-	_options?: Options,
+	_options?: Partial<Options>,
 ) {
 	const options = {
 		...DEFAULT_OPTIONS,
