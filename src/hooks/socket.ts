@@ -38,6 +38,11 @@ export function useLanyardWS(
 	const url = `${protocol}://${options.api.hostname}/socket`;
 
 	useEffect(() => {
+		// Don't try to connect on server
+		if (typeof window === 'undefined') {
+			return;
+		}
+
 		if (!('WebSocket' in window || 'MozWebSocket' in window)) {
 			throw new Error('WebSocket connections not supported in this browser.');
 		}
