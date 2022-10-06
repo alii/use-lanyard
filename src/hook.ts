@@ -5,7 +5,14 @@ import {
 	useEffect,
 	useState,
 } from 'react';
-import type {API, Data, LanyardResponse, Snowflake} from './types';
+import {
+	API,
+	Data,
+	DEFAULT_OPTIONS,
+	LanyardResponse,
+	Options,
+	Snowflake,
+} from './types';
 
 export type ContextData =
 	| {
@@ -32,7 +39,7 @@ export type Context = {
 	stateMap: Map<Snowflake, ContextData>;
 };
 
-export type UseLanyardREST = ContextData & {
+export type UseLanyardReturn = ContextData & {
 	revalidate(): Promise<void>;
 };
 
@@ -58,24 +65,12 @@ export function useLanyardContext() {
 	return useContext(context);
 }
 
-export type Options = {
-	/**
-	 * The Base URL of Lanyard's API. Defaults to `https://api.lanyard.rest`
-	 */
-	base: string;
-
-	/**
-	 * Initial data to use. Useful if server side rendering.
-	 */
-	initialData?: Data;
-};
-
 export function useLanyard(
 	snowflake: Snowflake,
 	_options?: Partial<Options>,
-): UseLanyardREST {
+): UseLanyardReturn {
 	const options: Options = {
-		base: 'https://api.lanyard.rest',
+		...DEFAULT_OPTIONS,
 		..._options,
 	};
 
@@ -116,40 +111,46 @@ export function useLanyard(
 		});
 	};
 
-	const revalidate = useCallback(async (controller?: AbortController) => {
-		if (getState().isLoading) {
-			return;
-		}
+	const protocol = options.api.secure ? 'https' : 'http';
+	const url = `${protocol}://${options.api.hostname}/v1/users/${snowflake}`;
 
-		loading(true);
+	const revalidate = useCallback(
+		async (controller?: AbortController) => {
+			if (getState().isLoading) {
+				return;
+			}
 
-		const init: RequestInit = {
-			method: 'GET',
-			signal: controller?.signal ?? null,
-			headers: {Accept: 'application/json'},
-		};
+			loading(true);
 
-		const request = new Request(`${options.base}/v1/users/${snowflake}`, init);
-		const response = await fetch(request);
+			const init: RequestInit = {
+				method: 'GET',
+				signal: controller?.signal ?? null,
+				headers: {Accept: 'application/json'},
+			};
 
-		const body = (await response.json()) as LanyardResponse;
+			const request = new Request(url, init);
+			const response = await fetch(request);
 
-		if ('error' in body) {
-			dispatch({
-				...getState(),
-				state: 'errored',
-				error: new LanyardError(request, response, body),
-				isLoading: false,
-			});
-		} else {
-			dispatch({
-				...getState(),
-				state: 'loaded',
-				data: body.data,
-				isLoading: false,
-			});
-		}
-	}, []);
+			const body = (await response.json()) as LanyardResponse;
+
+			if ('error' in body) {
+				dispatch({
+					...getState(),
+					state: 'errored',
+					error: new LanyardError(request, response, body),
+					isLoading: false,
+				});
+			} else {
+				dispatch({
+					...getState(),
+					state: 'loaded',
+					data: body.data,
+					isLoading: false,
+				});
+			}
+		},
+		[url],
+	);
 
 	useEffect(() => {
 		const listener = () => rerender({});

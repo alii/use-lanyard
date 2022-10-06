@@ -10,6 +10,28 @@ export namespace API {
 	};
 }
 
+export type Options = {
+	/**
+	 * The Base URL of Lanyard's API. Defaults to `https://api.lanyard.rest`
+	 */
+	api: {
+		hostname: string;
+		secure?: boolean;
+	};
+
+	/**
+	 * Initial data to use. Useful if server side rendering.
+	 */
+	initialData?: Data;
+};
+
+export const DEFAULT_OPTIONS: Options = {
+	api: {
+		hostname: 'api.lanyard.rest',
+		secure: true,
+	},
+};
+
 export type Snowflake = `${bigint}`;
 
 export type LanyardResponse =

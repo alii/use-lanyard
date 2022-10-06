@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {Data, Snowflake} from './types';
+import {Options, Data, Snowflake, DEFAULT_OPTIONS} from './types';
 
 export enum SocketOpcode {
 	Event,
@@ -23,8 +23,19 @@ export interface SocketMessage {
 	d?: SocketData;
 }
 
-export function useLanyardWS(snowflake: Snowflake | Snowflake[]) {
-	const [presence, setPresence] = useState<Data>();
+export function useLanyardWS(
+	snowflake: Snowflake | Snowflake[],
+	_options?: Options,
+) {
+	const options = {
+		...DEFAULT_OPTIONS,
+		..._options,
+	};
+
+	const [data, setData] = useState<Data>();
+
+	const protocol = options.api.secure ? 'wss' : 'ws';
+	const url = `${protocol}://${options.api.hostname}/socket`;
 
 	useEffect(() => {
 		if (!('WebSocket' in window || 'MozWebSocket' in window)) {
@@ -47,7 +58,7 @@ export function useLanyardWS(snowflake: Snowflake | Snowflake[]) {
 				clearInterval(heartbeat);
 			}
 
-			socket = new WebSocket('wss://api.lanyard.rest/socket');
+			socket = new WebSocket(url);
 
 			socket.addEventListener('open', () => {
 				console.log('Lanyard: Socket connection opened');
@@ -56,15 +67,15 @@ export function useLanyardWS(snowflake: Snowflake | Snowflake[]) {
 			socket.addEventListener('close', connect);
 
 			socket.addEventListener('message', event => {
-				const data: SocketMessage = JSON.parse(event.data);
+				const message = JSON.parse(event.data) as SocketMessage;
 
-				switch (data.op) {
-					case SocketOpcode.Hello:
+				switch (message.op) {
+					case SocketOpcode.Hello: {
 						heartbeat = setInterval(() => {
 							if (socket.readyState === socket.OPEN) {
 								socket.send(JSON.stringify({op: SocketOpcode.Heartbeat}));
 							}
-						}, data.d?.heartbeat_interval);
+						}, message.d?.heartbeat_interval);
 
 						if (socket.readyState === socket.OPEN) {
 							socket.send(
@@ -76,24 +87,30 @@ export function useLanyardWS(snowflake: Snowflake | Snowflake[]) {
 						}
 
 						break;
+					}
 
-					case SocketOpcode.Event:
-						switch (data.t) {
+					case SocketOpcode.Event: {
+						switch (message.t) {
 							case SocketEvents.INIT_STATE:
-							case SocketEvents.PRESENCE_UPDATE:
-								if (data.d) {
-									setPresence(data.d);
+							case SocketEvents.PRESENCE_UPDATE: {
+								if (message.d) {
+									setData(message.d);
 								}
 
 								break;
+							}
 
-							default:
+							default: {
 								break;
+							}
 						}
 
 						break;
-					default:
+					}
+
+					default: {
 						break;
+					}
 				}
 			});
 		}
@@ -106,7 +123,7 @@ export function useLanyardWS(snowflake: Snowflake | Snowflake[]) {
 			socket.removeEventListener('close', connect);
 			socket.close();
 		};
-	}, []);
+	}, [url]);
 
-	return presence;
+	return data ?? options.initialData;
 }
