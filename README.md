@@ -15,8 +15,8 @@ import {useLanyard} from 'use-lanyard';
 
 const DISCORD_ID = '268798547439255572';
 
-export function Activity() {
-	const {data: activity} = useLanyard(DISCORD_ID);
+export function Lanyard() {
+	const {data} = useLanyard(DISCORD_ID);
 
 	return <>...</>;
 }
@@ -27,7 +27,12 @@ export function Activity() {
 You can also provide initial data to the hook, which will be used until the client is hydrated/able to fetch the latest data.
 
 ```tsx
-const activity = useLanyard(DISCORD_ID, {
+const {data} = useLanyard(DISCORD_ID, {
+	initialData: myInitialDataFromTheServer,
+});
+
+// Also works with the WebSocket hook
+const data = useLanyardWS(DISCORD_ID, {
 	initialData: myInitialDataFromTheServer,
 });
 ```
@@ -41,20 +46,37 @@ import {useLanyardWS} from 'use-lanyard';
 
 const DISCORD_ID = '268798547439255572';
 
-export function Activity() {
-	const activity = useLanyardWS(DISCORD_ID);
+export function Lanyard() {
+	const data = useLanyardWS(DISCORD_ID);
 
 	return <>...</>;
 }
 ```
 
-### Advanced usage with TypeScript
+### Advanced usage
 
-If you need access to the underlying response types, you can import them as follows.
+If you need access to the underlying response types in TypeScript, you can import them as follows.
 
 ```ts
-import {Data, Activity} from 'use-lanyard';
 // See src/types.ts for all types
+import type {Data, Activity, LanyardResponse} from 'use-lanyard';
+```
+
+You can also customize the API endpoint that is used, if you wanted to self-host Lanyard.
+
+```ts
+export function Lanyard() {
+	const {data} = useLanyard(DISCORD_ID, {
+		api: {
+			hostname: 'my-lanyard.app',
+
+			// Tell the hook to use https/wss or http/ws
+			secure: true,
+		},
+	});
+
+	return <>...</>;
+}
 ```
 
 ## Acknowledgements

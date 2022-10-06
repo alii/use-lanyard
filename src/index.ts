@@ -1,3 +1,2 @@
-export * from './socket';
-export * from './hook';
+export * from './hooks';
 export * from './types';

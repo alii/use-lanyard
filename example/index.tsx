@@ -1,11 +1,10 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
-import {useLanyard} from '../src/hook';
+import {useLanyard, useLanyardWS} from '../src/index';
 
 function App() {
-	const state = useLanyard('268798547439255572');
-
-	console.log(state);
+	const rest = useLanyard('268798547439255572');
+	const socket = useLanyardWS('268798547439255572');
 
 	// Example showing built in request deduplication.
 	// The four requests below will only result in
@@ -18,9 +17,9 @@ function App() {
 
 	return (
 		<pre>
-			<code>{JSON.stringify({state}, null, 2)}</code>
+			<code>{JSON.stringify({rest, socket}, null, 2)}</code>
 
-			<button onClick={state.revalidate}>revalidate</button>
+			<button onClick={rest.revalidate}>revalidate</button>
 		</pre>
 	);
 }

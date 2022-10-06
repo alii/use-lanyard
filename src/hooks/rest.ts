@@ -12,7 +12,7 @@ import {
 	LanyardResponse,
 	Options,
 	Snowflake,
-} from './types';
+} from '../types';
 
 export type ContextData =
 	| {
