@@ -69,6 +69,8 @@ export interface DiscordUser {
 	public_flags: number;
 	id: Snowflake;
 	discriminator: string;
+	bot: boolean;
+	avatar_decoration: string;
 	avatar: string;
 }
 
