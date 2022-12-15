@@ -1,52 +1,15 @@
-import {
-	createContext,
-	useCallback,
-	useContext,
-	useEffect,
-	useState,
-} from 'react';
+import {useCallback, useEffect, useState} from 'react';
+import {ContextData, useLanyardContext} from '../context/context';
 import {
 	API,
-	Data,
 	DEFAULT_OPTIONS,
 	LanyardResponse,
 	Options,
 	Snowflake,
 } from '../types';
-
-export type ContextData =
-	| {
-			state: 'initial';
-			isLoading: boolean;
-			data: Data | undefined;
-			error: undefined;
-	  }
-	| {
-			state: 'loaded';
-			isLoading: boolean;
-			data: Data;
-			error: LanyardError | undefined;
-	  }
-	| {
-			state: 'errored';
-			isLoading: boolean;
-			data: Data | undefined;
-			error: LanyardError | undefined;
-	  };
-
-export type Context = {
-	listeners: Set<() => void>;
-	stateMap: Map<Snowflake, ContextData>;
-};
-
 export type UseLanyardReturn = ContextData & {
 	revalidate(): Promise<void>;
 };
-
-export const context = createContext<Context>({
-	listeners: new Set(),
-	stateMap: new Map(),
-});
 
 export class LanyardError extends Error {
 	public readonly code: number;
@@ -59,10 +22,6 @@ export class LanyardError extends Error {
 		super(body.error.message);
 		this.code = this.response.status;
 	}
-}
-
-export function useLanyardContext() {
-	return useContext(context);
 }
 
 export function useLanyard(
