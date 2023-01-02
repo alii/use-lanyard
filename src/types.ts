@@ -70,8 +70,8 @@ export interface DiscordUser {
 	id: Snowflake;
 	discriminator: string;
 	bot: boolean;
-	avatar_decoration: string;
-	avatar: string;
+	avatar_decoration: string | null;
+	avatar: string | null;
 }
 
 export interface Activity {
