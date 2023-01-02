@@ -51,11 +51,11 @@ export interface Data {
 }
 
 export interface Spotify {
-	track_id: string;
+	track_id: string | null;
 	timestamps: Timestamps;
 	song: string;
 	artist: string;
-	album_art_url: string;
+	album_art_url: string | null;
 	album: string;
 }
 
