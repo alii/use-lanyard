@@ -1,5 +1,5 @@
 import {LanyardResponse, Options, Snowflake} from '../types';
-import {LanyardError} from './rest';
+import {LanyardError} from '../hooks/rest';
 
 export interface GetOptions extends Options {
 	controller?: AbortController;

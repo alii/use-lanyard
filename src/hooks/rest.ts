@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import {ContextData, useLanyardContext} from '../context/context';
 import {API, DEFAULT_OPTIONS, Options, Snowflake} from '../types';
-import {get, getURL} from './get';
+import {get, getURL} from '../utils/get';
 
 export type UseLanyardReturn = ContextData & {
 	revalidate(): Promise<void>;
