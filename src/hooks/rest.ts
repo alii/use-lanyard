@@ -1,12 +1,8 @@
 import {useCallback, useEffect, useState} from 'react';
 import {ContextData, useLanyardContext} from '../context/context';
-import {
-	API,
-	DEFAULT_OPTIONS,
-	LanyardResponse,
-	Options,
-	Snowflake,
-} from '../types';
+import {API, DEFAULT_OPTIONS, Options, Snowflake} from '../types';
+import {get, getURL} from './get';
+
 export type UseLanyardReturn = ContextData & {
 	revalidate(): Promise<void>;
 };
@@ -70,8 +66,7 @@ export function useLanyard(
 		});
 	};
 
-	const protocol = options.api.secure ? 'https' : 'http';
-	const url = `${protocol}://${options.api.hostname}/v1/users/${snowflake}`;
+	const url = getURL(snowflake, options);
 
 	const revalidate = useCallback(
 		async (controller?: AbortController) => {
@@ -81,29 +76,23 @@ export function useLanyard(
 
 			loading(true);
 
-			const init: RequestInit = {
-				method: 'GET',
-				signal: controller?.signal ?? null,
-				headers: {Accept: 'application/json'},
-			};
+			const result = await get(
+				url,
+				controller ? {...options, controller} : options,
+			);
 
-			const request = new Request(url, init);
-			const response = await fetch(request);
-
-			const body = (await response.json()) as LanyardResponse;
-
-			if ('error' in body) {
+			if (result.error) {
 				dispatch({
 					...getState(),
 					state: 'errored',
-					error: new LanyardError(request, response, body),
+					error: result.error,
 					isLoading: false,
 				});
 			} else {
 				dispatch({
 					...getState(),
 					state: 'loaded',
-					data: body.data,
+					data: result.data,
 					isLoading: false,
 				});
 			}
