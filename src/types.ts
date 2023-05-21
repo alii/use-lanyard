@@ -98,6 +98,7 @@ export interface Emoji {
 }
 
 export interface Party {
+	size: [number, number];
 	id: Snowflake;
 }
 
