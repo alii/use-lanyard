@@ -99,7 +99,7 @@ export interface Emoji {
 
 export interface Party {
 	size: [number, number];
-	id: Snowflake;
+	id: string;
 }
 
 export interface Assets {
