@@ -68,6 +68,11 @@ export interface DiscordUser {
 	username: string;
 	public_flags: number;
 	id: Snowflake;
+	global_name: string | null;
+	/**
+	 * @deprecated Use global_name instead.
+	 */
+	display_name: string | null;
 	discriminator: string;
 	bot: boolean;
 	avatar_decoration: string | null;
