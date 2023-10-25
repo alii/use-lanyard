@@ -1,6 +1,6 @@
 {
 	"name": "use-lanyard",
-	"version": "1.5.0",
+	"version": "1.5.1",
 	"author": "Alistair Smith",
 	"description": "React hook for Lanyard for tracking your Discord presence.",
 	"repository": "https://github.com/alii/use-lanyard",
@@ -45,5 +45,9 @@
 		"react-dom": "^18.2.0",
 		"tsup": "^7.2.0",
 		"typescript": "^5.2.2"
+	},
+	"peerDependencies": {
+		"react": "*",
+		"react-dom": "*"
 	}
 }
