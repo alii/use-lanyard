@@ -1,5 +1,5 @@
-import {LanyardResponse, Options, Snowflake} from '../types';
 import {LanyardError} from '../hooks/rest';
+import {LanyardResponse, Options, Snowflake} from '../types';
 
 export interface GetOptions extends Options {
 	controller?: AbortController;
@@ -29,6 +29,7 @@ export async function get(url: ReturnType<typeof getURL>, options: GetOptions) {
 			error: new LanyardError(request, response, body),
 		};
 	}
+
 	return {
 		success: true as const,
 		data: body.data,

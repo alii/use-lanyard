@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {Options, Data, Snowflake, DEFAULT_OPTIONS} from '../types';
+import {DEFAULT_OPTIONS, Data, Options, Snowflake} from '../types';
 
 export enum SocketOpcode {
 	Event,

@@ -1,25 +1,32 @@
 {
 	"name": "use-lanyard",
-	"version": "1.4.4",
+	"version": "1.5.0",
 	"author": "Alistair Smith",
 	"description": "React hook for Lanyard for tracking your Discord presence.",
 	"repository": "https://github.com/alii/use-lanyard",
-	"main": "./dist/index.js",
-	"exports": "./dist/index.mjs",
-	"typings": "./dist/index.d.ts",
+	"main": "./dist/index.cjs",
+	"typings": "./dist/index.d.cts",
+	"exports": {
+		"./package.json": "./package.json",
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		}
+	},
+	"type": "module",
 	"license": "MIT",
 	"sideEffects": false,
 	"files": [
-		"dist",
-		"README.md",
-		"LICENSE",
-		"package.json"
+		"./dist",
+		"./README.md",
+		"./LICENSE",
+		"./package.json"
 	],
 	"engines": {
 		"node": ">=14"
 	},
 	"scripts": {
-		"build": "tsup-node",
+		"build": "tsup",
 		"release": "yarn build && yarn publish",
 		"example": "parcel ./example/index.html"
 	},
@@ -30,13 +37,13 @@
 		"hook"
 	],
 	"devDependencies": {
-		"@types/react": "^18.0.27",
-		"@types/react-dom": "^18.0.10",
-		"parcel": "^2.8.3",
+		"@types/react": "^18.2.32",
+		"@types/react-dom": "^18.2.14",
+		"parcel": "^2.10.1",
 		"process": "^0.11.10",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"tsup": "^6.5.0",
-		"typescript": "^4.9.5"
+		"tsup": "^7.2.0",
+		"typescript": "^5.2.2"
 	}
 }
