@@ -75,7 +75,10 @@ export interface DiscordUser {
 	display_name: string | null;
 	discriminator: string;
 	bot: boolean;
-	avatar_decoration: string | null;
+	avatar_decoration_data: {
+		asset: string;
+		sku_id: bigint;
+	} | null;
 	avatar: string | null;
 }
 
