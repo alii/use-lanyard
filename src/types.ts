@@ -54,9 +54,9 @@ export interface Spotify {
 	track_id: string | null;
 	timestamps: Timestamps;
 	song: string;
-	artist: string;
+	artist: string | null;
 	album_art_url: string | null;
-	album: string;
+	album: string | null;
 }
 
 export interface Timestamps {
