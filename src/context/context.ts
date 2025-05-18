@@ -1,10 +1,9 @@
 import type {Types} from '@prequist/lanyard';
 import {createContext, useContext} from 'react';
-import {LanyardError} from '../hooks';
-
 import type {Options} from '../types';
+import type {LanyardError} from '../utils/get';
 
-export type ContextData =
+export type State =
 	| {
 			state: 'initial';
 			isLoading: boolean;
@@ -12,7 +11,7 @@ export type ContextData =
 
 			/**
 			 * Data could exist *even* in the `initial` state
-			 * if {@link Options.initialData initialData} is passed during SSR
+			 * if {@link Options.initialData} is passed during SSR
 			 */
 			data: Types.Presence | undefined;
 	  }
@@ -29,16 +28,45 @@ export type ContextData =
 			error: LanyardError | undefined;
 	  };
 
+export class StateMap {
+	private readonly map = new Map<Types.Snowflake, State>();
+
+	get(
+		snowflake: Types.Snowflake,
+		initialData: Types.Presence | undefined,
+	): State {
+		const state = this.map.get(snowflake);
+
+		if (!state) {
+			const init: State = {
+				state: 'initial',
+				isLoading: false,
+				data: initialData,
+				error: undefined,
+			};
+
+			this.map.set(snowflake, init);
+
+			return init;
+		}
+
+		return state;
+	}
+
+	set(snowflake: Types.Snowflake, state: State) {
+		this.map.set(snowflake, state);
+	}
+
+	delete(snowflake: Types.Snowflake) {
+		this.map.delete(snowflake);
+	}
+}
+
+const context = createContext({
+	listeners: new Set<() => void>(),
+	stateMap: new StateMap(),
+});
+
 export function useLanyardContext() {
 	return useContext(context);
 }
-
-export type Context = {
-	listeners: Set<() => void>;
-	stateMap: Map<Types.Snowflake, ContextData>;
-};
-
-export const context = createContext<Context>({
-	listeners: new Set(),
-	stateMap: new Map(),
-});

@@ -1,129 +1,98 @@
-import type {API, Types} from '@prequist/lanyard';
-import {useCallback, useEffect, useState} from 'react';
-import {type ContextData, useLanyardContext} from '../context/context';
+import type {Types} from '@prequist/lanyard';
+import {useCallback, useEffect, useSyncExternalStore} from 'react';
+import {type State, useLanyardContext} from '../context/context';
 import {DEFAULT_OPTIONS, type Options} from '../types';
-import {get, getURL} from '../utils/get';
+import {get} from '../utils/get';
+import {useEvent} from './use-event';
 
-export type UseLanyardReturn = ContextData & {
+export type UseLanyardReturn = State & {
 	revalidate(): Promise<void>;
 };
 
-export class LanyardError extends Error {
-	public readonly code: number;
-
-	constructor(
-		public readonly request: Request,
-		public readonly response: Response,
-		public readonly body: API.ErroredAPIResponse,
-	) {
-		super(body.error.message);
-		this.code = this.response.status;
-	}
-}
-
 export function useLanyard(
 	snowflake: Types.Snowflake,
-	_options?: Partial<Options>,
+	userOptions?: Partial<Options>,
 ): UseLanyardReturn {
 	const options: Options = {
 		...DEFAULT_OPTIONS,
-		..._options,
+		...userOptions,
 	};
 
-	const [, rerender] = useState({});
 	const context = useLanyardContext();
 
-	if (!context.stateMap.has(snowflake)) {
-		context.stateMap.set(snowflake, {
-			state: 'initial',
-			isLoading: false,
-			data: options.initialData,
-			error: undefined,
-		});
-	}
-
-	const dispatch = (data: ContextData) => {
+	const dispatch = useEvent((data: State) => {
 		context.stateMap.set(snowflake, data);
 
 		for (const listener of context.listeners) {
 			listener();
 		}
-	};
+	});
 
-	const getState = () => {
-		const data = context.stateMap.get(snowflake);
+	const getState = useEvent(() => {
+		const data = context.stateMap.get(snowflake, options.initialData);
 
 		if (!data) {
 			throw new Error('State not found');
 		}
 
 		return data;
-	};
+	});
 
-	const loading = (isLoading: boolean) => {
-		dispatch({
-			...getState(),
-			isLoading,
-		});
-	};
+	const loading = useEvent((isLoading: boolean) => {
+		dispatch({...getState(), isLoading});
+	});
 
-	const url = getURL(snowflake, options);
+	const revalidate = useEvent(async (controller?: AbortController) => {
+		if (getState().isLoading) {
+			return;
+		}
 
-	const revalidate = useCallback(
-		async (controller?: AbortController) => {
-			if (getState().isLoading) {
-				return;
-			}
+		loading(true);
 
-			loading(true);
+		const result = await get(
+			snowflake,
+			controller ? {...options, controller} : options,
+		);
 
-			const result = await get(
-				url,
-				controller ? {...options, controller} : options,
-			);
-
-			if (result.error) {
-				dispatch({
-					...getState(),
-					state: 'errored',
-					error: result.error,
-					isLoading: false,
-				});
-			} else {
-				dispatch({
-					...getState(),
-					state: 'loaded',
-					data: result.data,
-					isLoading: false,
-				});
-			}
-		},
-		[url],
-	);
+		if (result.error) {
+			dispatch({
+				...getState(),
+				state: 'errored',
+				error: result.error,
+				isLoading: false,
+			});
+		} else {
+			dispatch({
+				...getState(),
+				state: 'loaded',
+				data: result.data,
+				isLoading: false,
+			});
+		}
+	});
 
 	useEffect(() => {
-		const listener = () => rerender({});
-		context.listeners.add(listener);
-
 		const controller = new AbortController();
 
-		void revalidate().finally(() => {
-			loading(false);
-		});
+		void revalidate(controller);
 
 		return () => {
 			controller.abort();
-			context.listeners.delete(listener);
 		};
 	}, [revalidate]);
 
-	return {
-		...getState(),
+	const subscribe = useCallback(
+		(fn: () => void) => {
+			context.listeners.add(fn);
 
-		// We want to make sure users cannot pass any arguments into this function
-		// for example, when doing <button onClick={revalidate} />
-		revalidate: useCallback(() => revalidate(), [revalidate]),
-	};
+			return () => {
+				context.listeners.delete(fn);
+			};
+		},
+		[snowflake],
+	);
+
+	const state = useSyncExternalStore(subscribe, getState, getState);
+
+	return {...state, revalidate};
 }
-
-export default useLanyard;
