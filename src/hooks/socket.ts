@@ -25,7 +25,17 @@ export interface SocketMessage {
 }
 
 export function useLanyardWS(
-	snowflake: Types.Snowflake | Types.Snowflake[],
+	snowflake: Types.Snowflake,
+	options: Partial<Options> & {
+		initialData: NonNullable<Options['initialData']>;
+	},
+): Types.Presence;
+export function useLanyardWS(
+	snowflake: Types.Snowflake,
+	options?: Partial<Options>,
+): Types.Presence | undefined;
+export function useLanyardWS(
+	snowflake: Types.Snowflake,
 	_options?: Partial<Options>,
 ) {
 	const options = {
@@ -46,14 +56,6 @@ export function useLanyardWS(
 
 		if (!('WebSocket' in window || 'MozWebSocket' in window)) {
 			throw new Error('WebSocket connections not supported in this browser.');
-		}
-
-		let subscribe_data: {subscribe_to_ids?: string[]; subscribe_to_id?: string};
-
-		if (typeof snowflake === 'object') {
-			subscribe_data = {subscribe_to_ids: snowflake};
-		} else {
-			subscribe_data = {subscribe_to_id: snowflake};
 		}
 
 		let heartbeat: ReturnType<typeof setTimeout>;
@@ -87,7 +89,7 @@ export function useLanyardWS(
 							socket.send(
 								JSON.stringify({
 									op: SocketOpcode.Initialize,
-									d: subscribe_data,
+									d: {subscribe_to_id: snowflake},
 								}),
 							);
 						}
