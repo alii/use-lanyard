@@ -27,7 +27,7 @@
 	},
 	"scripts": {
 		"build": "tsup",
-		"release": "yarn build && yarn publish",
+		"release": "yarn build && yarn npm publish",
 		"example": "parcel ./example/index.html"
 	},
 	"keywords": [
