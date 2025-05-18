@@ -1,6 +1,6 @@
 import {API, type Routes, type Types} from '@prequist/lanyard';
 import {LanyardError} from '../hooks/rest';
-import type {Options} from '../types';
+import {DEFAULT_OPTIONS, type Options} from '../types';
 
 export interface GetOptions extends Options {
 	controller?: AbortController;
@@ -12,7 +12,10 @@ export function getURL(snowflake: Types.Snowflake, options: Options) {
 	return `${protocol}://${options.api.hostname}/v1/users/${snowflake}` as const;
 }
 
-export async function get(url: ReturnType<typeof getURL>, options: GetOptions) {
+export async function get(
+	url: ReturnType<typeof getURL>,
+	options: GetOptions = DEFAULT_OPTIONS,
+) {
 	const init: RequestInit = {
 		method: 'GET',
 		signal: options.controller?.signal ?? null,
