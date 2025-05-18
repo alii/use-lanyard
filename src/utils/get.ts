@@ -6,16 +6,20 @@ export interface GetOptions extends Options {
 	controller?: AbortController;
 }
 
-export function getURL(snowflake: Types.Snowflake, options: Options) {
+export function getURL(
+	snowflake: Types.Snowflake,
+	options: Options = DEFAULT_OPTIONS,
+) {
 	const protocol = options.api.secure ? ('https' as const) : ('http' as const);
-
 	return `${protocol}://${options.api.hostname}/v1/users/${snowflake}` as const;
 }
 
 export async function get(
-	url: ReturnType<typeof getURL>,
+	snowflake: Types.Snowflake,
 	options: GetOptions = DEFAULT_OPTIONS,
 ) {
+	const url = getURL(snowflake, options);
+
 	const init: RequestInit = {
 		method: 'GET',
 		signal: options.controller?.signal ?? null,
