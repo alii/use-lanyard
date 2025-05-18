@@ -1,6 +1,7 @@
+import type {API, Types} from '@prequist/lanyard';
 import {useCallback, useEffect, useState} from 'react';
-import {ContextData, useLanyardContext} from '../context/context';
-import {API, DEFAULT_OPTIONS, Options, Snowflake} from '../types';
+import {type ContextData, useLanyardContext} from '../context/context';
+import {DEFAULT_OPTIONS, type Options} from '../types';
 import {get, getURL} from '../utils/get';
 
 export type UseLanyardReturn = ContextData & {
@@ -21,7 +22,7 @@ export class LanyardError extends Error {
 }
 
 export function useLanyard(
-	snowflake: Snowflake,
+	snowflake: Types.Snowflake,
 	_options?: Partial<Options>,
 ): UseLanyardReturn {
 	const options: Options = {

@@ -1,11 +1,12 @@
+import {API, type Routes, type Types} from '@prequist/lanyard';
 import {LanyardError} from '../hooks/rest';
-import {LanyardResponse, Options, Snowflake} from '../types';
+import type {Options} from '../types';
 
 export interface GetOptions extends Options {
 	controller?: AbortController;
 }
 
-export function getURL(snowflake: Snowflake, options: Options) {
+export function getURL(snowflake: Types.Snowflake, options: Options) {
 	const protocol = options.api.secure ? ('https' as const) : ('http' as const);
 
 	return `${protocol}://${options.api.hostname}/v1/users/${snowflake}` as const;
@@ -21,9 +22,9 @@ export async function get(url: ReturnType<typeof getURL>, options: GetOptions) {
 	const request = new Request(url, init);
 	const response = await fetch(request);
 
-	const body = (await response.json()) as LanyardResponse;
+	const body = (await response.json()) as Routes.GetPresence;
 
-	if (!body.success) {
+	if (!API.isSuccess(response, body)) {
 		return {
 			success: false as const,
 			error: new LanyardError(request, response, body),

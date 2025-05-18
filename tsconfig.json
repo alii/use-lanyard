@@ -15,7 +15,8 @@
 		"noUnusedParameters": true,
 		"exactOptionalPropertyTypes": true,
 		"noImplicitReturns": true,
-		"noUncheckedIndexedAccess": true
+		"noUncheckedIndexedAccess": true,
+		"verbatimModuleSyntax": true
 	},
 	"include": ["src"]
 }

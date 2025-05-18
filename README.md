@@ -58,13 +58,14 @@ export function Lanyard() {
 If you need access to the underlying response types in TypeScript, you can import them as follows.
 
 ```ts
-// See src/types.ts for all types
-import type {Data, Activity, LanyardResponse} from 'use-lanyard';
+import type {Types} from 'use-lanyard';
+
+type User = Types.DiscordUser;
 ```
 
 You can also customize the API endpoint that is used, if you wanted to self-host Lanyard.
 
-```ts
+```tsx
 export function Lanyard() {
 	const {data} = useLanyard(DISCORD_ID, {
 		api: {
@@ -81,5 +82,5 @@ export function Lanyard() {
 
 ## Acknowledgements
 
-- [Phineas Walton](https://github.com/Phineas/) – Author of lanyard
 - [Alistair Smith](https://github.com/alii/) – Author of this library
+- [Phineas Walton](https://github.com/Phineas/) – Author of lanyard

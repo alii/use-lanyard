@@ -1,5 +1,6 @@
+import type {Types} from '@prequist/lanyard';
 import {useEffect, useState} from 'react';
-import {DEFAULT_OPTIONS, Data, Options, Snowflake} from '../types';
+import {DEFAULT_OPTIONS, type Options} from '../types';
 
 export enum SocketOpcode {
 	Event,
@@ -13,7 +14,7 @@ export enum SocketEvents {
 	PRESENCE_UPDATE = 'PRESENCE_UPDATE',
 }
 
-export interface SocketData extends Data {
+export interface SocketData extends Types.Presence {
 	heartbeat_interval?: number;
 }
 
@@ -24,7 +25,7 @@ export interface SocketMessage {
 }
 
 export function useLanyardWS(
-	snowflake: Snowflake | Snowflake[],
+	snowflake: Types.Snowflake | Types.Snowflake[],
 	_options?: Partial<Options>,
 ) {
 	const options = {
@@ -32,7 +33,7 @@ export function useLanyardWS(
 		..._options,
 	};
 
-	const [data, setData] = useState<Data>();
+	const [data, setData] = useState<Types.Presence>();
 
 	const protocol = options.api.secure ? 'wss' : 'ws';
 	const url = `${protocol}://${options.api.hostname}/socket`;
