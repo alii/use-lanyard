@@ -1,7 +1,7 @@
 {
 	"name": "use-lanyard",
 	"author": "Alistair Smith <hi@alistair.sh>",
-	"version": "1.7.0",
+	"version": "1.7.1",
 	"type": "module",
 	"description": "React hook for Lanyard for tracking your Discord presence.",
 	"repository": "https://github.com/alii/use-lanyard",
@@ -37,7 +37,7 @@
 		"hook"
 	],
 	"dependencies": {
-		"@prequist/lanyard": "^1.0.1"
+		"@prequist/lanyard": "^1.2.0"
 	},
 	"devDependencies": {
 		"@types/react": "^18.2.32",
