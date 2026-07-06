@@ -23,11 +23,11 @@
 		"./package.json"
 	],
 	"engines": {
-		"node": ">=14"
+		"node": ">=18"
 	},
 	"scripts": {
 		"build": "tsup",
-		"release": "yarn build && yarn npm publish",
+		"release": "bun run build && bun publish",
 		"example": "parcel ./example/index.html"
 	},
 	"keywords": [
@@ -40,18 +40,21 @@
 		"@prequist/lanyard": "^1.2.0"
 	},
 	"devDependencies": {
-		"@types/react": "^18.2.32",
-		"@types/react-dom": "^18.2.14",
-		"parcel": "^2.10.1",
+		"@types/react": "^19.2.17",
+		"@types/react-dom": "^19.2.3",
+		"parcel": "^2.16.4",
 		"process": "^0.11.10",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
-		"tsup": "^8.5.0",
-		"typescript": "^5.2.2"
+		"react": "^19.2.7",
+		"react-dom": "^19.2.7",
+		"tsup": "^8.5.1",
+		"typescript": "^5.9.3"
 	},
 	"peerDependencies": {
 		"react": "*",
 		"react-dom": "*"
 	},
-	"packageManager": "yarn@4.9.1"
+	"trustedDependencies": [
+		"@parcel/watcher",
+		"@swc/core"
+	]
 }
