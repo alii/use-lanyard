@@ -53,6 +53,31 @@ export function Lanyard() {
 }
 ```
 
+### Subscribing to multiple users
+
+The WebSocket hook can also subscribe to multiple snowflakes at once. In this case it returns a map of snowflake to presence. Snowflakes that Lanyard does not monitor are omitted from the map, so each entry is possibly undefined.
+
+```tsx
+import {useLanyardWS} from 'use-lanyard';
+
+export function Lanyards() {
+	const presences = useLanyardWS(['268798547439255572', '94490510688792576']);
+
+	return <>{presences?.['268798547439255572']?.discord_status}</>;
+}
+```
+
+Initial data works here too, keyed per snowflake. If you provide a presence for every subscribed snowflake, the result is never undefined.
+
+```tsx
+const presences = useLanyardWS(['268798547439255572', '94490510688792576'], {
+	initialData: {
+		'268798547439255572': aliPresenceFromTheServer,
+		'94490510688792576': phinPresenceFromTheServer,
+	},
+});
+```
+
 ### Advanced usage
 
 If you need access to the underlying response types in TypeScript, you can import them as follows.

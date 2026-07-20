@@ -1,4 +1,6 @@
-export type Options = {
+export type Options<
+	TInitialData = import('@prequist/lanyard').Types.Presence,
+> = {
 	/**
 	 * The Base URL of Lanyard's API. Defaults to `https://api.lanyard.rest`
 	 */
@@ -9,8 +11,12 @@ export type Options = {
 
 	/**
 	 * Initial data to use. Useful if server side rendering.
+	 *
+	 * For a single snowflake this is a presence object. When subscribing
+	 * to multiple snowflakes with `useLanyardWS`, this is a map of
+	 * snowflake to presence.
 	 */
-	initialData?: import('@prequist/lanyard').Types.Presence;
+	initialData?: TInitialData;
 };
 
 export const DEFAULT_OPTIONS: Options = {

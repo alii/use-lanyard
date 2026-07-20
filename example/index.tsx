@@ -6,6 +6,10 @@ function App() {
 	const rest = useLanyard('268798547439255572');
 	const socket = useLanyardWS('268798547439255572');
 
+	// Subscribing to multiple snowflakes returns
+	// a map of snowflake -> presence
+	const multi = useLanyardWS(['268798547439255572', '94490510688792576']);
+
 	// Example showing built in request deduplication.
 	// The four requests below will only result in
 	// one request to the API. The other three will
@@ -17,7 +21,7 @@ function App() {
 
 	return (
 		<pre>
-			<code>{JSON.stringify({rest, socket}, null, 2)}</code>
+			<code>{JSON.stringify({rest, socket, multi}, null, 2)}</code>
 
 			<button onClick={rest.revalidate}>revalidate</button>
 		</pre>
