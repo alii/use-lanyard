@@ -2,25 +2,25 @@ name: CI
 on: [push]
 jobs:
   build:
-    name: Build on Node ${{ matrix.node }} and ${{ matrix.os }}
+    name: Build on ${{ matrix.os }}
 
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node: ['18.x', '20.x']
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Use Node ${{ matrix.node }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node }}
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install deps
-        run: yarn
+        run: bun install --frozen-lockfile
 
       - name: Build
-        run: yarn build
+        run: bun run build
+
+      - name: Test
+        run: bun test
