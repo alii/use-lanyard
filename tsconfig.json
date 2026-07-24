@@ -16,7 +16,8 @@
 		"exactOptionalPropertyTypes": true,
 		"noImplicitReturns": true,
 		"noUncheckedIndexedAccess": true,
-		"verbatimModuleSyntax": true
-	},
-	"include": ["src"]
+		"verbatimModuleSyntax": true,
+		"skipLibCheck": true,
+		"types": ["bun"]
+	}
 }

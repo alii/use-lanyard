@@ -1,31 +1,33 @@
-import React from 'react';
 import {createRoot} from 'react-dom/client';
-import {useLanyard, useLanyardWS} from '../src/index';
+import {useLanyard} from '../src/index';
 
 function App() {
-	const rest = useLanyard('268798547439255572');
-	const socket = useLanyardWS('268798547439255572');
+	const presence = useLanyard('268798547439255572');
 
 	// Subscribing to multiple snowflakes returns
 	// a map of snowflake -> presence
-	const multi = useLanyardWS(['268798547439255572', '94490510688792576']);
+	const multi = useLanyard([
+		'268798547439255572',
+		'94490510688792576',
+	]);
 
-	// Example showing built in request deduplication.
-	// The four requests below will only result in
-	// one request to the API. The other three will
-	// be resolved from the cache.
+	// Connections are deduplicated across the whole tab: every hook
+	// below shares the single WebSocket (and the subscriptions) of
+	// the two hooks above, so you can call useLanyard anywhere in
+	// your app without thinking about it
 	useLanyard('268798547439255572');
 	useLanyard('268798547439255572');
-	useLanyard('268798547439255572');
-	useLanyard('268798547439255572');
+	useLanyard(['268798547439255572', '94490510688792576']);
 
 	return (
 		<pre>
-			<code>{JSON.stringify({rest, socket, multi}, null, 2)}</code>
-
-			<button onClick={rest.revalidate}>revalidate</button>
+			<code>
+				{JSON.stringify({presence, multi}, null, 2)}
+			</code>
 		</pre>
 	);
 }
 
-createRoot(document.getElementById('root')!).render(<App />);
+createRoot(document.getElementById('root')!).render(
+	<App />,
+);
