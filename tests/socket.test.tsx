@@ -1,9 +1,9 @@
 import {GlobalRegistrator} from '@happy-dom/global-registrator';
 
 GlobalRegistrator.register();
-(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
+Object.assign(globalThis, {IS_REACT_ACT_ENVIRONMENT: true});
 
-import type {Types} from '@prequist/lanyard';
+import type {PresenceMap, Types} from '@prequist/lanyard';
 import {expect, test} from 'bun:test';
 import React, {act} from 'react';
 import {createRoot, type Root} from 'react-dom/client';
@@ -15,13 +15,13 @@ class FakeSocket {
 	OPEN = 1;
 	readyState = 0;
 	closed = false;
-	sent: any[] = [];
+	sent: {op: number; d: unknown}[] = [];
 
 	// The transport (sockittt) wires handlers via properties
-	onopen: ((event: any) => void) | null = null;
-	onmessage: ((event: any) => void) | null = null;
-	onclose: ((event: any) => void) | null = null;
-	onerror: ((event: any) => void) | null = null;
+	onopen: ((event: unknown) => void) | null = null;
+	onmessage: ((event: unknown) => void) | null = null;
+	onclose: ((event: unknown) => void) | null = null;
+	onerror: ((event: unknown) => void) | null = null;
 
 	constructor(
 		public url: string,
@@ -34,7 +34,7 @@ class FakeSocket {
 		this.sent.push(JSON.parse(data));
 	}
 
-	close(_code?: number, _reason?: string) {
+	close() {
 		this.closed = true;
 		this.readyState = 3;
 	}
@@ -52,8 +52,8 @@ class FakeSocket {
 	}
 }
 
-(globalThis as any).WebSocket = FakeSocket;
-(window as any).WebSocket = FakeSocket;
+Object.assign(globalThis, {WebSocket: FakeSocket});
+Object.assign(window, {WebSocket: FakeSocket});
 
 const A = '111111111111111111' as Types.Snowflake;
 const B = '222222222222222222' as Types.Snowflake;
@@ -77,9 +77,9 @@ test('hooks share one socket and only affected hooks re-render', () => {
 	let rendersA = 0;
 	let rendersB = 0;
 	let rendersBoth = 0;
-	let dataA: any;
-	let dataB: any;
-	let dataBoth: any;
+	let dataA: Types.Presence | undefined;
+	let dataB: Types.Presence | undefined;
+	let dataBoth: Partial<PresenceMap> | undefined;
 
 	function CompA() {
 		rendersA++;
@@ -154,7 +154,7 @@ test('hooks share one socket and only affected hooks re-render', () => {
 	expect(rendersBoth).toBeGreaterThan(beforeBoth);
 	expect(dataBoth).toEqual({[A]: pa1, [B]: pb2});
 	expect(dataBoth).not.toBe(mapBefore);
-	expect(dataBoth[A]).toBe(refA);
+	expect(dataBoth?.[A]).toBe(refA);
 
 	act(() => root.unmount());
 	expect(socket.closed).toBe(true);
@@ -165,7 +165,7 @@ test('map hooks skip re-renders for unrelated ids on the same socket', () => {
 	const api = {hostname: 'test-slices.example'};
 
 	let rendersA = 0;
-	let dataA: any;
+	let dataA: Partial<PresenceMap> | undefined;
 
 	function CompA() {
 		rendersA++;
@@ -223,9 +223,9 @@ test('per-hook initialData stays isolated and converges on socket data', () => {
 	const initialX = presence(A, 'online');
 	const initialY = presence(A, 'idle');
 
-	let dataX: any;
-	let dataY: any;
-	let dataZ: any;
+	let dataX: Types.Presence | undefined;
+	let dataY: Types.Presence | undefined;
+	let dataZ: Types.Presence | undefined;
 
 	function CompX() {
 		dataX = useLanyard(A, {api, initialData: initialX});

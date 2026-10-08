@@ -18,6 +18,7 @@ import {DEFAULT_OPTIONS, type Options} from '../types';
  * `keyof` still lists its keys.
  */
 type ProvidedKeys<I> = {
+	// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- `{}` is the standard optional-key test
 	[K in keyof I]-?: {} extends Pick<I, K> ? never : K;
 }[keyof I];
 
